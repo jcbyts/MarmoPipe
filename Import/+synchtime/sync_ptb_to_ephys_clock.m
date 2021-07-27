@@ -1,7 +1,12 @@
-function ptb2Ephys = sync_ptb_to_ephys_clock(Exp, ephysTrials)
+function ptb2Ephys = sync_ptb_to_ephys_clock(Exp, ephysTrials, varargin)
 % ptb2Ephys = syncPtb2EphysClock(Exp)
 % Returns a single function handle for converting Psychtoolbox times into
 % the ephys clock times for MarmoV
+ip = inputParser();
+ip.addParameter('fid', 1)
+ip.parse(varargin{:});
+
+fid = ip.Results.fid;
 
 if nargin < 2
     % Get list of trials with electrophysiolgy timestamps
@@ -33,8 +38,8 @@ w = (X'*X)\(X'*ptbClock);
 % function to synchronize
 ptb2Ephys = @(t) (t - w(2))/w(1);
 
-fprintf('Synchronizing the Ephys and PTB clocks with %d valid strobes\n', numel(ephysClock))
+fprintf(fid, 'Synchronizing the Ephys and PTB clocks with %d valid strobes\n', numel(ephysClock));
 totalErrorMs = sum((ephysClock - ptb2Ephys(ptbClock)).^2)*1e3;
-fprintf('Total error (SSE): %02.5f ms\n', totalErrorMs)
+fprintf(fid, 'Total error (SSE): %02.5f ms\n', totalErrorMs);
 
 % assert(totalErrorMs < .1, 'Clock sync failed')
