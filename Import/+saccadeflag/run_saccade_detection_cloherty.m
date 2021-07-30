@@ -43,11 +43,12 @@ ip.addParameter('velthresh', 8)
 ip.addParameter('velpeak', 10)
 ip.addParameter('isi', 0.04)
 ip.addParameter('ShowTrials', false)
+ip.addParameter('fid', 1)
 ip.parse(varargin{:});
 
 % % convert unmatched arguments for input to the saccade_flag function
 % args = [fieldnames(ip.Unmatched) struct2cell(ip.Unmatched)]';
-
+fid = ip.Results.fid;
 ShowTrials = ip.Results.ShowTrials;
 
 if ShowTrials
@@ -107,27 +108,34 @@ Exp.vpx.LabelIds = {'Fixation', 'Saccade', 'Blink', 'Lost'};
 
 % insert saccades
 nSaccades = size(Exp.slist,1);
-fprintf(1, 'Found %d saccades\n', nSaccades)
+fprintf(fid, 'Found %d saccades\n', nSaccades);
 
 if nSaccades == 0
     return
 end
 % 
 % expand blinks with some padding
+
 blink = Exp.vpx.smo(:,4)==0; % when pupil size is zero
+if all(blink) % means eye position was acquired online. this is meaningless
+    blink(:) = false;
+end
 padding = 5;
 bc = ones(padding,1);
 blink = filtfilt(bc, 1, double(blink)) > 0;
+fprintf(fid, '%d/%d samples excluded because pupil size was 0\n', sum(blink), numel(blink));
 Exp.vpx.Labels(blink) = 4;
 
 % flag velocities that make no sense
 badVel = Exp.vpx.smo(:,7) > 1e3; % unphysiologically plausible  velocities 
 Exp.vpx.Labels(badVel) = 4;
 v = Exp.vpx.smo(Exp.slist(:,6),7);
+fprintf(fid, '%d/%d samples excluded because eye jumped > 1000 deg/sec\n', sum(v > 1e3), numel(v));
 Exp.slist(v > 1e3,:) = [];
 
 % tracker is unreliable more than 20 d.v.a from center (flag and label)
 offScreen = hypot(Exp.vpx.smo(:,2),Exp.vpx.smo(:,2)) > 20;
+fprintf(fid, '%d/%d samples excluded because eye pos was off screen (> 20 deg)\n', sum(offScreen), numel(offScreen));
 Exp.vpx.Labels(offScreen) = 4;
 
 % if any saccades intersect with blinks, remove them
@@ -143,7 +151,7 @@ end
 
 % insert saccades
 nSaccades = size(Exp.slist,1);
-fprintf(1, 'Ended with %d saccades after QA\n', nSaccades)
+fprintf(fid, 'Ended with %d saccades after QA\n', nSaccades);
 for iSac = 1:nSaccades
     ix = Exp.slist(iSac,4):Exp.slist(iSac,5);
     Exp.vpx.Labels(ix) = 2;
@@ -205,6 +213,6 @@ if ShowTrials
     [an, ~, ~, wfs] = eventTriggeredAverage(spd, en(ind), win);
     figure, imagesc(log(wfs))
     
-    figure, imagesc(log(wfs(1:100,:)))
+%     figure, imagesc(log(wfs(1:100,:)))
 end
 

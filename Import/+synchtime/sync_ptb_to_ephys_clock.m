@@ -8,7 +8,7 @@ ip.parse(varargin{:});
 
 fid = ip.Results.fid;
 
-if nargin < 2
+if nargin < 2 || isempty(ephysTrials)
     % Get list of trials with electrophysiolgy timestamps
     ephysTrials = find(cellfun(@(x) ~isnan(x.START_EPHYS), Exp.D));
 end
