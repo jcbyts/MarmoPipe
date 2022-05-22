@@ -46,7 +46,7 @@ end           % option of binocular not considered here, if so would average bot
 %********
 scale = (1/32768);   %apply transformation we used
 %**********
-tt = double(edf.FSAMPLE.time')/1000;
+tt = double(edf.FSAMPLE.time')/1000; % time in seconds
 xx = -scale * double( edf.FSAMPLE.px(EYEUSED,:))';
 yy = scale * double( edf.FSAMPLE.py(EYEUSED,:))';
 pp = double( edf.FSAMPLE.pa(EYEUSED,:))';
