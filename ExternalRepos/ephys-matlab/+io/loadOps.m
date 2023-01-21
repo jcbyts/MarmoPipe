@@ -1,9 +1,9 @@
 function ops = loadOps(fpath)
 % LOADOPS loads the ops struct that is required for KiloSort (and holds directory information about the raw data)
 % Inputs:
-%   fpath@string    - path to session
+%   fpath string    - path to session
 % Outputs:
-%   ops@struct      - ops struct. built by io.oe2dat --> used for KiloSort
+%   ops struct      - ops struct. built by io.oe2dat --> used for KiloSort
 % Example Call:
 %   oepath = 'C:\Data\Ellie_2017-08-09_13-04-23_ShankD15MT6';
 %   ops = io.loadOps(oepath);

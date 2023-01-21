@@ -3,13 +3,13 @@ function [data, timestamps, info] = getMUA(ops, overwrite)
 % It will import the lfp and remove line noise if this is the first time it
 % is called.
 % Inputs:
-%   ops@struct     - the ops struct from a single recording shank
-%   overwrite@logical - whether to overwrite the import
-%   plotIt@logical  - boolean. plots line noise estimation during import.
+%   ops struct     - the ops struct from a single recording shank
+%   overwrite logical - whether to overwrite the import
+%   plotIt logical  - boolean. plots line noise estimation during import.
 % Output:
-%   data@double       - nSamples x nChannels data (in mV)
-%   timestamps@double - nSamples x 1 time (in OE time)
-%   info@str
+%   data double       - nSamples x nChannels data (in mV)
+%   timestamps double - nSamples x 1 time (in OE time)
+%   info string
 % [data, timestamps, info] = getLFP(ops, showOutput)
 
 % 2017.08.14    jly     wrote it

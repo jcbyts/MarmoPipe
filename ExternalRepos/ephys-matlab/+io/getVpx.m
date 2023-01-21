@@ -4,13 +4,13 @@ function [data, timestamps, elInfo] = getVpx(sess, PDS, overwrite)
 % combo, where the binary file contains raw data and the mat file contains
 % meta-data. 
 % Inputs:
-%   session@struct    - session info struct (or struct-array)
+%   session struct    - session info struct (or struct-array)
 %   PDS@cell          - cell array of PDS structures
-%   overwrite@logical - flag to reimport
+%   overwrite logical - flag to reimport
 % Outputs:
-%   data@double       - n x 3 [x y pupil] in degrees
-%   timestamps@double - n x 1 (time in OE time)
-%   elInfo@struct     - meta data
+%   data double       - n x 3 [x y pupil] in degrees
+%   timestamps double - n x 1 (time in OE time)
+%   elInfo struct     - meta data
 % Example call:
 % [data, timestamps, elInfo] = io.getVpx(ops, PDS)
 

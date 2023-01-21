@@ -1,12 +1,12 @@
 function [ops, info] = oe2dat(oepath, shanks, varargin)
 % ops = oe2dat(oepath, shanks, varargin)
 % Inputs:
-%   oepath@string - full path to the data
+%   oepath string - full path to the data
 %   shanks@cell   - array of electrodes used
 %
 % Optional Inputs (argument pairs):
-%   overwrite@logical - overwrite imported data (default: false)
-%   verbose@logical   - print to the command window
+%   overwrite logical - overwrite imported data (default: false)
+%   verbose logical   - print to the command window
 ops = []; 
 
 if nargin < 2 || isempty(shanks)

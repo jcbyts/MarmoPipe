@@ -7,7 +7,7 @@ classdef csdFlash < handle
         numTrials
         trial
         display
-        method@char='spline' % csd method
+        method char='spline' % csd method
     end
     
     methods

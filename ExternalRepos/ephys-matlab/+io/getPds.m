@@ -1,7 +1,7 @@
 function PDS = getPds(sessionInfo, overwrite, includeBadSyncs)
 % GET PDS loads PLDAPS files and synchronizes with the OE clock
 % Inputs:
-%   SessionInfo@struct - session info struct from io.loadSession(oepath)
+%   SessionInfo struct - session info struct from io.loadSession(oepath)
 % Outputs:
 %   PDS@cell    - array of PDS structs
 % Example call:

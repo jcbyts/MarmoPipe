@@ -1,7 +1,7 @@
 function sp = getSpikes(sess, tag)
 % GET SPIKES gets spike times and cluster info
 % Inputs:
-%   session@struct - session struct
+%   session struct - session struct
 % Output:
 %   sp@cell     - cell array of spike structs
 % Example call:

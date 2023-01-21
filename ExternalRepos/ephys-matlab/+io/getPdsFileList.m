@@ -1,7 +1,7 @@
 function pdsList = getPdsFileList(sessionInfo)
 % GET PDS FILE LIST finds all PDS files in a session or sessions
 % Inputs:
-%   sessionInfo@struct - struct(array) of session structs from
+%   sessionInfo struct - struct(array) of session structs from
 %                        io.loadSession(oepath)
 % Output:
 %   pdsList@cell - array of strings, paths to PDS files

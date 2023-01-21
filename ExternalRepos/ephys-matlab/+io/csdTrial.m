@@ -3,7 +3,7 @@ function csdTrial = csdTrial(PDS, varargin)
 % Inputs:
 %   PDS@cell - array of PDS structs
 % Output:
-%   csdTrial@struct - array of trials
+%   csdTrial struct - array of trials
 % Example call:
 %   csdTrial = csdTrial(PDS)
 

@@ -178,7 +178,7 @@ classdef squareFlash < handle
             %   'window'  [1 x 2] - bounds of the window to analyze (degrees)
             %   'binSize' [1 x 1] - size of each bin (degrees)
             % Output
-            %   S@struct
+            %   S struct
             %       X [time x bins] - stimulus binned in space. Each row is
             %                         the stimulus frame reshaped to be a
             %                         single vector of size diff(window)/binSize

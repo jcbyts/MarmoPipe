@@ -1,9 +1,9 @@
 function info = loadEphysInfo(fpath)
 % LOADEPHYSINFO loads the meta data required for reconstructing the timestamps/voltage of raw ephys data
 % Inputs:
-%   fpath@string    - path to session
+%   fpath string    - path to session
 % Outputs:
-%   info@struct      - info struct. built by io.oe2dat --> meta-data required to make sense of raw ephys samples
+%   info struct      - info struct. built by io.oe2dat --> meta-data required to make sense of raw ephys samples
 % Example Call:
 %   oepath = 'C:\Data\Ellie_2017-08-09_13-04-23_ShankD15MT6';
 %   info   = io.loadEphysInfo(oepath);

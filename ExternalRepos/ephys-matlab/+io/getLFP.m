@@ -3,12 +3,12 @@ function [data, timestamps, info] = getLFP(ops, overwrite, plotIt)
 % It will import the lfp and remove line noise if this is the first time it
 % is called.
 % Inputs:
-%   ops@struct     - the ops struct from a single recording shank
-%   overwrite@logical - whether to overwrite the import
-%   plotIt@logical  - boolean. plots line noise estimation during import.
+%   ops struct     - the ops struct from a single recording shank
+%   overwrite logical - whether to overwrite the import
+%   plotIt logical  - boolean. plots line noise estimation during import.
 % Output:
-%   data@double       - nSamples x nChannels data (in mV)
-%   timestamps@double - nSamples x 1 time (in OE time)
+%   data double       - nSamples x nChannels data (in mV)
+%   timestamps double - nSamples x 1 time (in OE time)
 %   info@str
 % [data, timestamps, info] = getLFP(ops, showOutput)
 

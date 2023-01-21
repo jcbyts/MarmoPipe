@@ -3,18 +3,18 @@ classdef probe < handle
     %   Detailed explanation goes here
     
     properties
-        name@char
-        manufacturer@char
-        design@char
-        num@char
-        xcoords@double
-        ycoords@double
-        zcoords@double
-        channelMap@double
-        connector@char
-        material@char
-        impedence@double
-        headstages@cell
+        name char
+        manufacturer char
+        design char
+        num char
+        xcoords double
+        ycoords double
+        zcoords double
+        channelMap double
+        connector char
+        material char
+        impedence double
+        headstages cell
     end
     
     methods

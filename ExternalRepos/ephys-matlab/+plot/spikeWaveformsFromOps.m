@@ -1,8 +1,8 @@
 function fig = spikeWaveformsFromOps(ops, sp, varargin)
 % PLOT WAVEFORMS
 % Inputs:
-%   ops@struct - ops struct
-%   sp@struct  - spikes struct
+%   ops struct - ops struct
+%   sp struct  - spikes struct
 % Optional Arguments (as pairs)
 %   'figure'          - figure number or handle
 %   'numWaveforms'    - default 500

@@ -2,14 +2,14 @@ classdef headstage < handle
     %HEADSTAGE class describes headstages
     
     properties
-        name@char
-        manufacturer@char
-        model@char
-        filter@double
-        samplingRate@double
-        connector@char
-        gains@double
-        channelMap@double
+        name char
+        manufacturer char
+        model char
+        filter double
+        samplingRate double
+        connector char
+        gains double
+        channelMap double
     end
     
     methods

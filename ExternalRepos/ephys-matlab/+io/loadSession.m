@@ -1,12 +1,12 @@
 function [sessionInfo, ops, info] = loadSession(oepath)
 % LOADSESSION loads the meta data about an OE/PLDAPS session
 % Inputs:
-%   oepath@string    - path to session
+%   oepath string    - path to session
 %   oepath can also be a meta data entry
 % Outputs:
-% 	sessionInfo@struct - info about session(s)
-%   ops@struct         - ops struct. built by io.oe2dat --> used for KiloSort
-%   info@struct        - info struct. built by io.oe2dat --> meta-data required to make sense of raw ephys samples
+% 	sessionInfo struct - info about session(s)
+%   ops struct         - ops struct. built by io.oe2dat --> used for KiloSort
+%   info struct        - info struct. built by io.oe2dat --> meta-data required to make sense of raw ephys samples
 % Example Call:
 %   oepath = 'C:\Data\Ellie_2017-08-09_13-04-23_ShankD15MT6';
 %   [sessionInfo, ops, info] = loadSession(oepath)
