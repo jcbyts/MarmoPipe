@@ -1,9 +1,14 @@
-function vpx2Ephys = sync_vpx_to_ephys_clock(Exp, ephysTrials)
+function vpx2Ephys = sync_vpx_to_ephys_clock(Exp, ephysTrials, varargin)
 % vpx2Ephys = sync_vpx_to_ephys_clock(Exp, ephysTrials)
 % Returns a single function handle for converting Eyetracker times into
 % the ephys clock times for MarmoV
+ip = inputParser();
+ip.addParameter('fid', 1)
+ip.addParameter('debug', false)
+ip.addParameter('mode', 'linear')
+ip.parse(varargin{:});
 
-if nargin < 2
+if nargin < 2 || isempty(ephysTrials)
     % Get list of trials with electrophysiolgy timestamps
     ephysTrials = find(cellfun(@(x) ~isnan(x.START_EPHYS), Exp.D));
 end
@@ -26,16 +31,27 @@ bad = isnan(ephysClock) | isnan(vpxClock);
 ephysClock(bad) = [];
 vpxClock(bad) = [];
 
-% % least-squares to synchronize
-% X = [ephysClock ones(numel(vpxClock), 1)];
-% w = (X'*X)\(X'*vpxClock);
-% 
-% % function to synchronize
-% vpx2Ephys = @(t) (t - w(2))/w(1);
-vpx2Ephys = synchtime.align_clocks(vpxClock, ephysClock);
+vpx2Ephys = synchtime.align_clocks(vpxClock, ephysClock, 'mode', ip.Results.mode);
 
-% fprintf('Synchronizing the Ephys and Eyetracker clocks with %d valid strobes\n', numel(ephysClock))
-% totalErrorMs = sum((ephysClock - vpx2Ephys(vpxClock)).^2)*1e3;
-% fprintf('Total error (SSE): %02.5f ms\n', totalErrorMs)
+fprintf(1, 'Synchronizing the Ephys and Eye-tracker clocks with %d valid strobes\n', numel(ephysClock));
+deltaE = (ephysClock - vpx2Ephys(vpxClock));
+totalErrorMs = sum(deltaE.^2)*1e3;
 
-% assert(totalErrorMs < .1, 'Clock sync failed')
+if ip.Results.debug
+    figure(999); clf
+    subplot(1,2,1)
+    plot(vpxClock, ephysClock, '.'); hold on
+    plot(vpxClock, vpx2Ephys(vpxClock))
+
+    subplot(1,2,2)
+    histogram(deltaE)
+
+    figure(998); clf
+    plot(deltaE)
+    hold on
+    plot(xlim, [0 0], 'k--')
+    keyboard
+end
+
+
+assert(totalErrorMs < .1, 'Clock sync failed')
