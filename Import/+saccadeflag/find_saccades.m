@@ -26,8 +26,8 @@ p.addParameter('accthresh',5e3,@(x) validateattributes(x,{'numeric'},{'scalar','
 p.addParameter('velthresh',10,@(x) validateattributes(x,{'numeric'},{'scalar','positive'})); % velocity threshold (deg./s)
 p.addParameter('velpeak',10,@(x) validateattributes(x,{'numeric'},{'scalar','positive'})); % min. peak velocity (deg./s)
 
-p.addParameter('isi',0.050,@(x) validateattributes(x,{'numeric'},{'scalar','positive'}));
-p.addParameter('dt',0.075,@(x) validateattributes(x,{'numeric'},{'scalar','positive'}));
+p.addParameter('isi',0.050,@(x) validateattributes(x,{'numeric'},{'scalar'}));
+p.addParameter('dt',0.075,@(x) validateattributes(x,{'numeric'},{'scalar'}));
 
 p.addParameter('debug',false,@(x) validateattributes(x,{'logical'},{'scalar'}));
 
@@ -55,6 +55,7 @@ vel = structfun(@(x) fs*locfilt(coeffs,1,x),pos,'UniformOutput',false);
 
 % scalar eye speed
 speed = hypot(vel.x,vel.y);
+speed(isnan(speed)) = 0;
 
 % estimate baseline (e.g., pursuit) speed using a moving average...
 a = 1;
@@ -74,11 +75,13 @@ idx = findZeroCrossings(fix(accel)./args.accthresh,-1);
 idx(speed(idx) < args.velpeak) = [];
 
 % ignore saccades too close to the start or end of the recording
-idx(idx < args.order+args.dt*fs) = [];
-idx(idx > length(t)-args.dt*fs) = [];
+if args.dt > 0
+    idx(idx < args.order+args.dt*fs) = [];
+    idx(idx > length(t)-args.dt*fs) = [];
+end
 
 % sanity check...
-idx(speed(idx) < baseline(idx)+args.velthresh) = [];
+% idx(speed(idx) < baseline(idx)+args.velthresh) = [];
 
 if isempty(idx)
     saccades=[];
@@ -268,13 +271,13 @@ saccades.dX     = saccades.endXpos - saccades.startXpos;
 saccades.dY     = saccades.endYpos - saccades.startYpos;
 saccades.size   = sqrt(saccades.dX.^2 + saccades.dY.^2);
 n = numel(saccades.tstart);
-saccades.vel    = zeros(n, 1);
-saccades.peakIndex    = zeros(n, 1);
-saccades.tpeak    = zeros(n, 1);
+saccades.vel    = nan(n, 1);
+saccades.peakIndex    = nan(n, 1);
+saccades.tpeak    = nan(n, 1);
 for i = 1:n
     [v,ind] = max(speed(saccades.startIndex(i):saccades.endIndex(i)) );
-    saccades.vel(i) = v;
-    saccades.peakIndex(i) = saccades.startIndex(i) + ind - 1;
+    saccades.vel(i) = v(1);
+    saccades.peakIndex(i) = saccades.startIndex(i) + ind(1) - 1;
     saccades.tpeak(i) = timestamps(saccades.peakIndex(i));
 end
 

@@ -1,4 +1,4 @@
-function [slist] = flag_saccades( eyeSmo , varargin)
+function [slist, saccades] = flag_saccades( eyeSmo , varargin)
 % function [slist] = flag_saccades( eyeSmo )
 %***
 %*** takes a smoothed eye data segment of following format:
@@ -53,7 +53,13 @@ SampRate    = ip.Results.SampRate;
 %****************************
 
 Time = eyeSmo(:,1);
-Vabs = eyeSmo(:,7);
+if size(eyeSmo,2)==6
+    Vabs = hypot(eyeSmo(:,5), eyeSmo(:,6));
+else
+    Vabs = eyeSmo(:,7);
+end
+
+
 %***********************
 slist = [];
 
@@ -118,3 +124,51 @@ if ~isempty(mylist)
     end
 end
 
+
+xpos = eyeSmo(:,2);
+ypos = eyeSmo(:,3);
+speed = Vabs;
+
+if isempty(slist)
+    saccades = struct('tstart', [], ...
+        'tend', [], ...
+        'duration', [], ...
+        'startIndex', [], ...
+        'endIndex', [], ...
+        'startXpos', [], ...
+        'startYpos', [], ...
+        'endXpos', [], ...
+        'dX', [], ...
+        'dY', [], ...
+        'size', [], ...
+        'vel', [], ...
+        'peakIndex', [], ...
+        'endYpos', [], ...
+        'tpeak', []);
+    return
+end
+
+
+saccades = struct();
+saccades.tstart = slist(:,1);
+saccades.tend   = slist(:,2);
+saccades.duration = saccades.tend- saccades.tstart;
+saccades.startIndex = slist(:,4);
+saccades.endIndex   = slist(:,5);
+saccades.startXpos  = xpos(saccades.startIndex);
+saccades.startYpos  = ypos(saccades.startIndex);
+saccades.endXpos  = xpos(saccades.endIndex);
+saccades.endYpos  = ypos(saccades.endIndex);
+saccades.dX     = saccades.endXpos - saccades.startXpos;
+saccades.dY     = saccades.endYpos - saccades.startYpos;
+saccades.size   = sqrt(saccades.dX.^2 + saccades.dY.^2);
+n = numel(saccades.tstart);
+saccades.vel    = zeros(n, 1);
+saccades.peakIndex    = zeros(n, 1);
+saccades.tpeak    = zeros(n, 1);
+for i = 1:n
+    [v,ind] = max(speed(saccades.startIndex(i):saccades.endIndex(i)) );
+    saccades.vel(i) = v;
+    saccades.peakIndex(i) = saccades.startIndex(i) + ind - 1;
+    saccades.tpeak(i) = Time(saccades.peakIndex(i));
+end

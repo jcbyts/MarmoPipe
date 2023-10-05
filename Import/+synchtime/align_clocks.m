@@ -26,8 +26,8 @@ switch ip.Results.mode
         
 
     case {'linear', 'pchip', 'spline', 'cubic', 'makima'}
-        syncFun = @(t) interp1(clock1, clock2, t, ip.Results.mode);
-        invSyncFun = @(t) interp1(clock2, clock1, t, ip.Results.mode);
+        syncFun = @(t) interp1(clock1, clock2, t, ip.Results.mode, 'extrap');
+        invSyncFun = @(t) interp1(clock2, clock1, t, ip.Results.mode, 'extrap');
     
     otherwise
         error('align_clocks: unrecognized method for aligning clocks')

@@ -14,14 +14,14 @@ function artifacts = find_artifacts(timestamps, xpos, ypos,varargin)
 %
 % See also: lpfirdd.
 
-% 2023-06-20 - Jake, based off saccade detection from Shaun
+% 2023-06-20 - Jake
 
 args = varargin;
 p = inputParser;
 
-p.addParameter('order',32,@(x) validateattributes(x,{'numeric'},{'scalar','even'})); % low-pass filter/differentiator order
-p.addParameter('Wn',[0.1,0.16],@(x) validateattributes(x,{'numeric'},{'vector'})); % filter transition band (percentage of Nyquist frequency)
-
+% p.addParameter('order',5,@(x) validateattributes(x,{'numeric'},{'scalar','even'})); % low-pass filter/differentiator order
+% p.addParameter('Wn',[0.1,0.16],@(x) validateattributes(x,{'numeric'},{'vector'})); % filter transition band (percentage of Nyquist frequency)
+p.addParameter('order',5);
 p.addParameter('velthresh',10,@(x) validateattributes(x,{'numeric'},{'scalar','positive'})); % velocity threshold (deg./s)
 p.addParameter('buffer', 0)
 p.addParameter('isi',0.050,@(x) validateattributes(x,{'numeric'},{'scalar','positive'}));
@@ -33,9 +33,9 @@ p.parse(args{:});
 args = p.Results;
 
 % low-pass FIR digital differentiator coefficients
-N = round(args.order/2);
-copt = lpfirdd(N, args.Wn(1), args.Wn(2), 1 ,0)';
-coeffs = [fliplr(copt), 0, -copt];
+% N = round(args.order/2);
+% copt = lpfirdd(N, args.Wn(1), args.Wn(2), 1 ,0)';
+% coeffs = [fliplr(copt), 0, -copt];
 
 timestamps = timestamps(:);
 xpos = xpos(:);
@@ -46,24 +46,38 @@ t = timestamps;
 pos = struct('x',xpos,'y',ypos);
 
 fs = round(1/nanmedian(diff(timestamps))); % sampling freq. (samples/s)
-
 % horiz. (x) and vert. (y) velocities
-vel = structfun(@(x) fs*locfilt(coeffs,1,x),pos,'UniformOutput',false);
+dxdt = @(x) imgaussfilt(filter([1; -1], 1, x), args.order);
+velx = dxdt(xpos)*fs;
+vely = dxdt(ypos)*fs;
 
+% vel = structfun(@(x) fs*locfilt(coeffs,1,x),pos,'UniformOutput',false);
+
+
+% vel = structfun(@(x) fs*dxdt(x),pos,'UniformOutput',false);
 % scalar eye speed
-speed = hypot(vel.x,vel.y);
+speed = hypot(velx,vely);
 speed = speed + 1./speed;
 
-% estimate baseline (e.g., pursuit) speed using a moving average...
-a = 1;
-b = ones(1,2*N+1)./(2*N+1);
-baseline = locfilt(b,a,speed);
+% % estimate baseline (e.g., pursuit) speed using a moving average...
+% a = 1;
+% b = ones(1,2*N+1)./(2*N+1);
+% baseline = locfilt(b,a,speed);
 
 % find baseline velocities that exceed threshold
-startidx = findZeroCrossings(fix(baseline - args.velthresh),1);
-stopidx = findZeroCrossings(fix(baseline - args.velthresh),-1);
+startidx = findZeroCrossings(fix(speed - args.velthresh),1);
+stopidx = findZeroCrossings(fix(speed - args.velthresh),-1);
 
 a = 1;
+
+if stopidx(end) < startidx(end)
+    stopidx = [stopidx; numel(speed)];
+end
+
+if startidx(1) > stopidx(1)
+    startidx = [1; startidx];
+end
+
 while numel(startidx) > numel(stopidx)
     
     if (stopidx(a) - startidx(a+1)) >= 0
